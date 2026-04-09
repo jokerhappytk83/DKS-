@@ -25,11 +25,11 @@ export interface AuthState {
 const ADMINS_KEY = "admins_v1";
 const AUTH_STATE_KEY = "auth_state_v1";
 
-// 기본 관리자 (초기 설정용)
+// 메인 관리자 (초기 설정용)
 const DEFAULT_ADMIN: Admin = {
-  id: "admin-default",
-  name: "관리자",
-  password: "1234",
+  id: "admin-main",
+  name: "dkcass",
+  password: "dkcass8131",
   createdAt: new Date().toISOString(),
 };
 
