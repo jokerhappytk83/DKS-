@@ -1,7 +1,5 @@
 {
-  "buildCommand": "pnpm build:web",
+  "buildCommand": "cd .expo/web && ls -la",
   "outputDirectory": ".expo/web",
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "installCommand": "pnpm install && pnpm build:web"
 }

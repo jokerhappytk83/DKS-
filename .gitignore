@@ -60,6 +60,7 @@ Thumbs.db
 *.tgz
 *.tar.gz
 .cache/
+node_modules/react-native-css-interop/.cache/
 
 # Webdev artifacts (checkpoint zips, migrations, etc.)
 .webdev/
