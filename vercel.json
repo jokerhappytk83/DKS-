@@ -1,0 +1,8 @@
+{
+  "buildCommand": "pnpm build:web",
+  "outputDirectory": ".expo/web",
+  "framework": "react-native",
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
