@@ -29,10 +29,13 @@ export interface Grievance {
   category: GrievanceCategory;
   urgency: GrievanceUrgency;
   isAnonymous: boolean;
+  isPrivate: boolean; // 비공개 여부
+  privatePassword?: string; // 비공개 시 비밀번호 (해시 처리 권장)
   status: GrievanceStatus;
   submittedAt: string;
   submitterName: string;
   submitterDept: string;
+  submitterId: string; // 접수자 ID (권한 확인용)
   timeline: GrievanceTimeline[];
   adminComment?: string;
 }
@@ -99,6 +102,22 @@ export async function saveUserProfile(profile: UserProfile): Promise<void> {
   await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
 }
 
+// 사용자가 고충을 볼 수 있는지 확인
+export function canViewGrievance(
+  grievance: Grievance,
+  userId: string,
+  isAdmin: boolean
+): boolean {
+  // 관리자는 모두 볼 수 있음
+  if (isAdmin) return true;
+
+  // 비공개가 아니면 모두 볼 수 있음
+  if (!grievance.isPrivate) return true;
+
+  // 비공개인 경우 접수자만 볼 수 있음
+  return grievance.submitterId === userId;
+}
+
 function getSampleGrievances(): Grievance[] {
   return [
     {
@@ -108,10 +127,12 @@ function getSampleGrievances(): Grievance[] {
       category: "근무환경",
       urgency: "일반",
       isAnonymous: false,
+      isPrivate: false,
       status: "처리중",
       submittedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       submitterName: "홍길동",
       submitterDept: "인사팀",
+      submitterId: "visitor-sample-1",
       timeline: [
         {
           date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
@@ -137,10 +158,12 @@ function getSampleGrievances(): Grievance[] {
       category: "급여",
       urgency: "긴급",
       isAnonymous: false,
+      isPrivate: true,
       status: "완료",
       submittedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      submitterName: "홍길동",
-      submitterDept: "인사팀",
+      submitterName: "김철수",
+      submitterDept: "개발팀",
+      submitterId: "visitor-sample-2",
       timeline: [
         {
           date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),

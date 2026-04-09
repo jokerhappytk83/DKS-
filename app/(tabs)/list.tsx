@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useMemo } from "react";
 import {
   FlatList,
   Pressable,
@@ -11,6 +11,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
+import { useAuth } from "@/lib/auth-provider";
 import {
   type Grievance,
   type GrievanceStatus,
@@ -118,6 +119,18 @@ export default function ListScreen() {
   const router = useRouter();
   const [grievances, setGrievances] = useState<Grievance[]>([]);
   const [filter, setFilter] = useState<FilterTab>("전체");
+  const { authState } = useAuth();
+  const userId = (authState.user as any)?.id || "";
+  const isAdmin = authState.role === "admin";
+
+  // 권한 기반 필터링
+  const filteredGrievances = useMemo(() => {
+    return grievances.filter((g) => {
+      if (isAdmin) return true;
+      if (!g.isPrivate) return true;
+      return g.submitterId === userId;
+    });
+  }, [grievances, isAdmin, userId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -126,14 +139,14 @@ export default function ListScreen() {
   );
 
   const filtered =
-    filter === "전체" ? grievances : grievances.filter((g) => g.status === filter);
+    filter === "전체" ? filteredGrievances : filteredGrievances.filter((g) => g.status === filter);
 
   return (
     <ScreenContainer>
       {/* 헤더 */}
       <View style={[styles.header, { backgroundColor: colors.primary }]}>
-        <Text style={styles.headerTitle}>내 고충 목록</Text>
-        <Text style={styles.headerSub}>총 {grievances.length}건 접수</Text>
+        <Text style={styles.headerTitle}>{isAdmin ? "전체 고충 목록" : "내 고충 목록"}</Text>
+        <Text style={styles.headerSub}>총 {filteredGrievances.length}건 접수</Text>
       </View>
 
       {/* 필터 탭 */}
@@ -148,8 +161,8 @@ export default function ListScreen() {
             const isActive = filter === tab;
             const count =
               tab === "전체"
-                ? grievances.length
-                : grievances.filter((g) => g.status === tab).length;
+                ? filteredGrievances.length
+                : filteredGrievances.filter((g) => g.status === tab).length;
             return (
               <Pressable
                 style={[

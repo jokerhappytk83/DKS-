@@ -26,10 +26,12 @@ const mockGrievance: Grievance = {
   category: "근무환경",
   urgency: "일반",
   isAnonymous: false,
+  isPrivate: false,
   status: "접수중",
   submittedAt: new Date().toISOString(),
   submitterName: "테스트 직원",
   submitterDept: "개발팀",
+  submitterId: "test-user-1",
   timeline: [
     {
       date: new Date().toISOString(),

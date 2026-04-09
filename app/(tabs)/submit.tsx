@@ -20,6 +20,7 @@ import {
   type GrievanceUrgency,
   addGrievance,
   loadUserProfile,
+  type UserProfile,
 } from "@/lib/grievance-store";
 
 const CATEGORIES: GrievanceCategory[] = ["근무환경", "인사", "급여", "대인관계", "기타"];
@@ -64,10 +65,12 @@ export default function SubmitScreen() {
         category,
         urgency,
         isAnonymous,
+        isPrivate: false,
         status: "접수중",
         submittedAt: now,
         submitterName: isAnonymous ? "익명" : profile.name,
         submitterDept: isAnonymous ? "비공개" : profile.department,
+        submitterId: profile.employeeId,
         timeline: [
           {
             date: now,
